@@ -20,15 +20,17 @@ class SitemapController < Spree::BaseController
           xml.changefreq 'daily'
           xml.priority '1.0'
         }
-        Taxon.find_in_batches do |group|
-          group.each do |taxon|
-            v = _build_taxon_hash(taxon)
-            xml.url {
-              xml.loc public_dir + v['link']
-              xml.lastmod v['updated'].xmlschema			  #change timestamp of last modified
-              xml.changefreq 'weekly'
-              xml.priority '0.8'
-            } 
+        Taxonomy.navigation do |taxonomy|
+          Taxon.find_in_batches(:condition => [:taxonomy_id => taxonomy.id]) do |group|
+            group.each do |taxon|
+              v = _build_taxon_hash(taxon)
+              xml.url {
+                xml.loc public_dir + v['link']
+                xml.lastmod v['updated'].xmlschema			  #change timestamp of last modified
+                xml.changefreq 'weekly'
+                xml.priority '0.8'
+              } 
+            end
           end
         end
         Product.active.find_in_batches do |group|
