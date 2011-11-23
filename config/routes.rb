@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
 
-	resources :sitemap
+	resources :sitemap, :constraints => { :format => /xml/ }
 
 end
