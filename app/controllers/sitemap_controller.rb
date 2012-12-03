@@ -10,7 +10,7 @@ class SitemapController < Spree::BaseController
 
   private
   def _build_xml(public_dir)
-    returning '' do |output|
+    String.new.tap do |output|
       xml = Builder::XmlMarkup.new(:target => output, :indent => 2) 
       xml.instruct!  :xml, :version => "1.0", :encoding => "UTF-8"
       xml.urlset( :xmlns => "http://www.sitemaps.org/schemas/sitemap/0.9" ) {
