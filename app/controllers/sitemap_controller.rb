@@ -20,8 +20,8 @@ class SitemapController < Spree::BaseController
           xml.changefreq 'daily'
           xml.priority '1.0'
         }
-        Taxonomy.navigation do |taxonomy|
-          Taxon.find_in_batches(:condition => [:taxonomy_id => taxonomy.id]) do |group|
+        Spree::Taxonomy.navigation do |taxonomy|
+          Spree::Taxon.find_in_batches(:condition => [:taxonomy_id => taxonomy.id]) do |group|
             group.each do |taxon|
               v = _build_taxon_hash(taxon)
               xml.url {
@@ -33,7 +33,7 @@ class SitemapController < Spree::BaseController
             end
           end
         end
-        Product.active.find_in_batches do |group|
+        Spree::Product.active.find_in_batches do |group|
           group.each do |product|
             v = _build_product_hash(product)
             xml.url {
