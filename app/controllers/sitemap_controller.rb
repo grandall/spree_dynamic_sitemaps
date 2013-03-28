@@ -33,7 +33,7 @@ class SitemapController < Spree::BaseController
             end
           end
         end
-        Spree::Product.active.includes(:variants, :taxons).find_in_batches do |group|
+        Spree::Product.active.find_in_batches do |group|
           group.each do |product|
             v = _build_product_hash(product)
             xml.url {
