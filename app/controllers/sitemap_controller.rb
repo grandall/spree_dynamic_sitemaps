@@ -33,7 +33,7 @@ class SitemapController < Spree::BaseController
             end
           end
         end
-        Spree::Product.active.find_in_batches do |group|
+        Spree::Product.active.includes(:variants, :taxons).find_in_batches do |group|
           group.each do |product|
             v = _build_product_hash(product)
             xml.url {
@@ -44,6 +44,33 @@ class SitemapController < Spree::BaseController
             } 
           end
         end
+        
+        ActiveRecord::Base.connection.select_all(<<-END
+          select distinct replace(t.permalink, 'manufacturers/','skus/') as permalink, v.manufacturer_number, p.updated_at
+          from spree_products p
+            inner join spree_products_taxons pt
+              on pt.product_id = p.id
+            inner join spree_taxons t 
+              on t.id = pt.taxon_id
+            inner join spree_taxonomies tn 
+              on tn.id = t.taxonomy_id
+                and tn.name = 'Manufacturers'
+            inner join spree_variants v 
+              on v.product_id = p.id
+                and v.deleted_at is null
+                and p.deleted_at is null
+                and v.is_master = 0
+                and v.manufacturer_number is not null;
+        END
+        ).each do |row|
+          xml.url {
+            xml.loc public_dir + row['permalink'] + "/#{CGI.escape(row['manufacturer_number'])}"
+            xml.lastmod row['updated_at'].xmlschema
+            xml.changefreq 'weekly'
+            xml.priority '0.8'
+          }
+        end
+        
       }
     end
   end
