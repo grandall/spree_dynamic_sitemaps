@@ -107,8 +107,7 @@ class SitemapController < Spree::BaseController
     pinfo
   end
 
-  def _build_variant_hash(variant)
-    product = variant.product
+  def _build_variant_hash(product, variant)
     vinfo = {}
     vinfo['name'] = product.name + ' (' + variant.manufacturer_number + ')'
     vinfo['link'] = ['skus', product.manufacturer.permalink.split('/').last, variant.manufacturer_number].join('/')
