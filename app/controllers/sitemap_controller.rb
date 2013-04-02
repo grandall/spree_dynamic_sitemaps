@@ -44,7 +44,7 @@ class SitemapController < Spree::BaseController
         #    } 
         #  end
         #end
-        Spree::Product.active.includes(:variants, :manufacturers).find_in_batches do |batch|
+        Spree::Product.active.includes(:variants, :taxons).find_in_batches do |batch|
           batch.each do |product|
             product.variants.each do |variant|
               next unless variant.active?
